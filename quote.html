@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Life Quotes</title>
+
+<style>
+body{
+    margin:0;
+    font-family:Arial;
+    background:linear-gradient(to right,#141e30,#243b55);
+    color:white;
+}
+
+.container{
+    padding:40px;
+}
+
+.card{
+    background:white;
+    color:black;
+    margin:10px;
+    padding:15px;
+    border-radius:10px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <h1>Life Quotes</h1>
+    <div id="quotes"></div>
+</div>
+
+<script src="./config.js"></script>
+
+<script>
+
+const API_URL = window.API_CONFIG.API_URL;
+
+async function loadQuotes(){
+
+    const res = await fetch(`${API_URL}/quote`);
+    const data = await res.json();
+
+    const box = document.getElementById("quotes");
+    box.innerHTML = "";
+
+    data.forEach(q=>{
+        box.innerHTML += `
+            <div class="card">
+                <img src="${q.image}" width="100%">
+                <p>${q.text}</p>
+            </div>
+        `;
+    });
+}
+
+loadQuotes();
+
+</script>
+
+</body>
+</html>

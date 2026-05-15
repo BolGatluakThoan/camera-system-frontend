@@ -1,0 +1,3 @@
+window.API_CONFIG = {
+    API_URL: "https://your-backend-url.onrender.com"
+};

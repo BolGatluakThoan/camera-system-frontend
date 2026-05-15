@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Admin Panel</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial;
+}
+
+body{
+    background:linear-gradient(to right,#141e30,#243b55);
+    color:white;
+    min-height:100vh;
+}
+
+/* NAVBAR */
+.navbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:15px 20px;
+    background:rgba(0,0,0,0.35);
+    backdrop-filter:blur(10px);
+    position:sticky;
+    top:0;
+    z-index:1000;
+}
+
+.left{
+    font-size:20px;
+    font-weight:bold;
+}
+
+/* LINKS */
+.links{
+    display:flex;
+    gap:10px;
+    align-items:center;
+}
+
+.nav-btn{
+    background:#1f2937;
+    color:white;
+    padding:8px 12px;
+    border-radius:8px;
+    text-decoration:none;
+    font-size:14px;
+}
+
+.logout-btn{
+    background:#ff4b5c;
+    border:none;
+    color:white;
+    padding:10px 15px;
+    border-radius:8px;
+    cursor:pointer;
+}
+
+/* HAMBURGER */
+.hamburger{
+    display:none;
+    font-size:26px;
+    cursor:pointer;
+}
+
+/* MOBILE */
+@media(max-width:768px){
+    .hamburger{display:block;}
+
+    .links{
+        position:fixed;
+        top:0;
+        right:-100%;
+        width:70%;
+        height:100vh;
+        background:#111827;
+        flex-direction:column;
+        padding:80px 20px;
+        transition:0.3s;
+        z-index:2000;
+    }
+
+    .links.show{
+        right:0;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="navbar">
+    <div class="left">📸 Admin Panel</div>
+
+    <div class="hamburger" onclick="toggleMenu()">☰</div>
+
+    <div class="links" id="menu">
+        <a class="nav-btn" href="./gallery.html">Manage Photos</a>
+        <a class="nav-btn" href="./create-quote.html">Manage Quotes</a>
+        <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
+</div>
+
+<div id="gallery"></div>
+
+<script src="./config.js"></script>
+
+<script>
+
+const API_URL = window.API_CONFIG.API_URL;
+
+const token = localStorage.getItem("token");
+
+if(!token){
+    window.location.href="./admin.html";
+}
+
+function toggleMenu(){
+    document.getElementById("menu").classList.toggle("show");
+}
+
+function logout(){
+    localStorage.removeItem("token");
+    window.location.href="./admin.html";
+}
+
+async function loadPhotos(){
+
+    const res = await fetch(`${API_URL}/photos`, {
+        headers:{ Authorization:"Bearer "+token }
+    });
+
+    const data = await res.json();
+
+    const gallery = document.getElementById("gallery");
+    gallery.innerHTML = "";
+
+    data.forEach(photo=>{
+
+        const div = document.createElement("div");
+
+        div.innerHTML = `
+            <img src="${photo.image}" width="100%">
+            <h3>${photo.title || "No title"}</h3>
+            <p>${photo.description || ""}</p>
+
+            <button onclick="editPhoto('${photo._id}','${photo.title || ""}','${photo.description || ""}')">Edit</button>
+            <button onclick="deletePhoto('${photo._id}')">Delete</button>
+        `;
+
+        gallery.appendChild(div);
+    });
+}
+
+/* ✅ SAFE EDIT (NO DATA LOSS) */
+window.editPhoto = async function(id, oldTitle, oldDesc){
+
+    let title = prompt("Edit title (leave empty to keep)", oldTitle);
+    if(title === null) return;
+
+    let description = prompt("Edit description (leave empty to keep)", oldDesc);
+    if(description === null) return;
+
+    if(title.trim() === "") title = oldTitle;
+    if(description.trim() === "") description = oldDesc;
+
+    await fetch(`${API_URL}/photo/${id}`, {
+        method:"PUT",
+        headers:{
+            "Content-Type":"application/json",
+            Authorization:"Bearer "+token
+        },
+        body:JSON.stringify({ title, description })
+    });
+
+    loadPhotos();
+}
+
+window.deletePhoto = async function(id){
+
+    if(!confirm("Delete?")) return;
+
+    await fetch(`${API_URL}/photo/${id}`, {
+        method:"DELETE",
+        headers:{ Authorization:"Bearer "+token }
+    });
+
+    loadPhotos();
+}
+
+loadPhotos();
+</script>
+
+</body>
+</html>

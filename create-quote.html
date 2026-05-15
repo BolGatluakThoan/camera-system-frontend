@@ -1,0 +1,28 @@
+<!-- ONLY NAVBAR PART UPDATED -->
+<div class="navbar">
+
+    <div class="left">✍️ Manage Quotes</div>
+
+    <div class="hamburger" onclick="toggleMenu()">☰</div>
+
+    <div class="links" id="menu">
+
+        <a class="nav-btn" href="./gallery.html">Admin Panel</a>
+        <a class="nav-btn" href="./create-quote.html">Manage Quotes</a>
+        <a class="nav-btn" href="./quote.html">Life Quotes</a>
+
+        <button class="logout-btn" onclick="logout()">Logout</button>
+
+    </div>
+</div>
+
+<script>
+function toggleMenu(){
+    document.getElementById("menu").classList.toggle("show");
+}
+
+function logout(){
+    localStorage.removeItem("token");
+    window.location.href="./admin.html";
+}
+</script>
