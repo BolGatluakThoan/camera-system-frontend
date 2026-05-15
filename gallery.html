@@ -18,8 +18,6 @@ body{
     background:linear-gradient(to right,#141e30,#243b55);
     color:white;
     min-height:100vh;
-
-    /* FIX OVERFLOW ISSUE */
     overflow-x:hidden;
 }
 
@@ -41,13 +39,14 @@ body{
     font-weight:bold;
 }
 
-/* LINKS */
+/* LINKS (DESKTOP) */
 .links{
     display:flex;
     gap:10px;
     align-items:center;
 }
 
+/* BUTTONS */
 .nav-btn{
     background:#1f2937;
     color:white;
@@ -73,6 +72,16 @@ body{
     cursor:pointer;
 }
 
+/* CLOSE BUTTON (NEW) */
+.close-btn{
+    display:none;
+    font-size:26px;
+    cursor:pointer;
+    position:absolute;
+    top:15px;
+    right:20px;
+}
+
 /* TITLE */
 .page-title{
     text-align:center;
@@ -81,13 +90,11 @@ body{
 
 .page-title h1{
     font-size:28px;
-    color:#fff;
 }
 
 .page-title p{
     color:#cbd5e1;
     font-size:14px;
-    margin-top:5px;
 }
 
 /* GRID */
@@ -121,23 +128,13 @@ body{
     padding:12px;
 }
 
-.card-content h3{
-    margin-bottom:6px;
-}
-
-.card-content p{
-    font-size:14px;
-    opacity:0.8;
-}
-
-/* BUTTONS */
 .actions{
     display:flex;
     gap:10px;
     margin-top:12px;
 }
 
-/* BIGGER + MORE ATTRACTIVE BUTTONS */
+/* BUTTONS */
 .edit-btn,
 .delete-btn{
     flex:1;
@@ -147,7 +144,6 @@ body{
     font-size:15px;
     font-weight:bold;
     cursor:pointer;
-    transition:0.2s;
 }
 
 .edit-btn{
@@ -155,22 +151,12 @@ body{
     color:white;
 }
 
-.edit-btn:hover{
-    background:#1d4ed8;
-    transform:scale(1.03);
-}
-
 .delete-btn{
     background:#ef4444;
     color:white;
 }
 
-.delete-btn:hover{
-    background:#dc2626;
-    transform:scale(1.03);
-}
-
-/* MOBILE FIX */
+/* ================= MOBILE ================= */
 @media(max-width:768px){
 
     .hamburger{
@@ -181,25 +167,33 @@ body{
         position:fixed;
         top:0;
         right:-100%;
-        width:70%;
+        width:75%;
         height:100vh;
         background:#111827;
         flex-direction:column;
-        padding:80px 20px;
+        padding:70px 20px;
         transition:0.3s;
         z-index:2000;
+        gap:15px;
     }
 
     .links.show{
         right:0;
     }
 
-    .page-title h1{
-        font-size:22px;
+    .close-btn{
+        display:block;
     }
 
-    .card img{
-        height:200px;
+    .nav-btn, .logout-btn{
+        width:100%;
+        text-align:center;
+        padding:14px;
+        font-size:16px;
+    }
+
+    .page-title h1{
+        font-size:22px;
     }
 }
 </style>
@@ -213,9 +207,14 @@ body{
     <div class="hamburger" onclick="toggleMenu()">☰</div>
 
     <div class="links" id="menu">
+
+        <!-- CLOSE BUTTON ADDED -->
+        <div class="close-btn" onclick="toggleMenu()">✖</div>
+
         <a class="nav-btn" href="./gallery.html">Manage Photos</a>
         <a class="nav-btn" href="./create-quote.html">Manage Quotes</a>
         <button class="logout-btn" onclick="logout()">Logout</button>
+
     </div>
 </div>
 
