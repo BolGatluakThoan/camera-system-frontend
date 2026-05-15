@@ -2,6 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Admin Login</title>
 
 <style>
@@ -9,51 +11,98 @@ body{
     margin:0;
     font-family:Arial;
     background:linear-gradient(to right,#141e30,#243b55);
-    height:100vh;
+    min-height:100vh;
     display:flex;
     justify-content:center;
     align-items:center;
     color:white;
+    padding:20px;
+    box-sizing:border-box;
 }
 
+/* LOGIN BOX */
 .box{
     background:#1e293b;
     padding:30px;
     border-radius:12px;
-    width:320px;
+    width:100%;
+    max-width:360px;
     text-align:center;
+    box-shadow:0 10px 30px rgba(0,0,0,0.4);
 }
 
+/* TITLE */
+h2{
+    margin-bottom:15px;
+    font-size:22px;
+}
+
+/* INPUT */
 input{
     width:100%;
-    padding:10px;
+    padding:12px;
     margin:10px 0;
     border:none;
     border-radius:8px;
+    outline:none;
+    font-size:14px;
 }
 
+/* BUTTONS */
 button{
     width:100%;
-    padding:10px;
+    padding:12px;
     border:none;
     border-radius:8px;
     cursor:pointer;
+    font-size:14px;
 }
 
+/* LOGIN */
 .login-btn{
     background:#3b82f6;
     color:white;
+    margin-top:10px;
 }
 
+.login-btn:hover{
+    background:#2563eb;
+}
+
+/* HOME */
 .home-btn{
     background:#10b981;
     color:white;
     margin-top:10px;
 }
 
+.home-btn:hover{
+    background:#059669;
+}
+
+/* ERROR TEXT */
 #error{
     color:#ff4b5c;
     margin-top:10px;
+    font-size:14px;
+}
+
+/* SMALL DEVICES */
+@media(max-width:480px){
+
+    .box{
+        padding:20px;
+        border-radius:10px;
+    }
+
+    h2{
+        font-size:20px;
+    }
+
+    input, button{
+        font-size:13px;
+        padding:10px;
+    }
 }
 </style>
 </head>
