@@ -1,28 +1,744 @@
-<!-- ONLY NAVBAR PART UPDATED -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Manage Quotes</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, sans-serif;
+}
+
+body{
+    background:linear-gradient(to right,#141e30,#243b55);
+    color:white;
+    min-height:100vh;
+}
+
+/* ================= NAVBAR ================= */
+
+.navbar{
+    width:100%;
+    background:rgba(0,0,0,0.35);
+    backdrop-filter:blur(10px);
+    padding:15px 25px;
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    position:sticky;
+    top:0;
+    z-index:1000;
+
+    box-shadow:0 5px 15px rgba(0,0,0,0.2);
+}
+
+.logo{
+    font-size:22px;
+    font-weight:bold;
+    color:white;
+}
+
+/* RIGHT SIDE BUTTONS */
+.nav-buttons{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+/* BUTTONS */
+.nav-btn{
+    border:none;
+    outline:none;
+    cursor:pointer;
+
+    padding:10px 18px;
+    border-radius:8px;
+
+    color:white;
+    font-size:14px;
+    font-weight:600;
+
+    transition:0.3s ease;
+}
+
+/* BACK */
+.back-btn{
+    background:#10b981;
+}
+
+.back-btn:hover{
+    background:#059669;
+    transform:translateY(-2px);
+}
+
+/* LOGOUT */
+.logout-btn{
+    background:#ef4444;
+}
+
+.logout-btn:hover{
+    background:#dc2626;
+    transform:translateY(-2px);
+}
+
+/* MOBILE NAVBAR */
+@media(max-width:600px){
+
+    .navbar{
+        flex-direction:column;
+        gap:15px;
+        text-align:center;
+    }
+
+    .nav-buttons{
+        width:100%;
+        justify-content:center;
+        flex-wrap:wrap;
+    }
+
+    .nav-btn{
+        width:140px;
+    }
+}
+
+/* ================= CONTAINER ================= */
+
+.container{
+    max-width:1200px;
+    margin:auto;
+    padding:30px 20px;
+}
+
+/* ================= FORM ================= */
+
+.form-box{
+    background:white;
+    color:black;
+
+    padding:25px;
+    border-radius:15px;
+
+    margin-bottom:30px;
+
+    box-shadow:0 5px 20px rgba(0,0,0,0.3);
+}
+
+.form-box h2{
+    margin-bottom:20px;
+    color:#111827;
+}
+
+input,
+textarea{
+    width:100%;
+
+    padding:12px;
+
+    margin-top:10px;
+    margin-bottom:20px;
+
+    border:1px solid #ccc;
+    border-radius:8px;
+
+    font-size:15px;
+}
+
+textarea{
+    min-height:120px;
+    resize:vertical;
+}
+
+/* SAVE BUTTON */
+.save-btn{
+    background:#0077ff;
+    color:white;
+
+    border:none;
+    padding:12px 18px;
+    border-radius:8px;
+
+    cursor:pointer;
+
+    transition:0.3s;
+}
+
+.save-btn:hover{
+    background:#005edb;
+}
+
+/* ================= GRID ================= */
+
+.quote-grid{
+    display:grid;
+
+    grid-template-columns:
+    repeat(auto-fit,minmax(280px,1fr));
+
+    gap:20px;
+}
+
+/* ================= CARD ================= */
+
+.card{
+    background:white;
+    color:black;
+
+    border-radius:15px;
+    overflow:hidden;
+
+    box-shadow:0 5px 20px rgba(0,0,0,0.3);
+
+    animation:fadeIn 0.4s ease;
+}
+
+.card img{
+    width:100%;
+    height:220px;
+    object-fit:cover;
+}
+
+.card-content{
+    padding:15px;
+}
+
+.card-content h3{
+    margin-bottom:10px;
+    color:#111827;
+}
+
+.card-content p{
+    color:#555;
+    line-height:1.5;
+}
+
+/* ACTION BUTTONS */
+.actions{
+    display:flex;
+    gap:10px;
+    margin-top:15px;
+}
+
+.edit-btn,
+.delete-btn{
+    border:none;
+    padding:10px 15px;
+    border-radius:8px;
+    cursor:pointer;
+    color:white;
+    transition:0.3s;
+}
+
+.edit-btn{
+    background:#0077ff;
+}
+
+.edit-btn:hover{
+    background:#005edb;
+}
+
+.delete-btn{
+    background:#ff4b5c;
+}
+
+.delete-btn:hover{
+    background:#ff1f3d;
+}
+
+/* ================= MODAL ================= */
+
+.modal{
+    position:fixed;
+    inset:0;
+
+    background:rgba(0,0,0,0.7);
+
+    display:none;
+
+    justify-content:center;
+    align-items:center;
+
+    z-index:9999;
+
+    padding:20px;
+}
+
+.modal-box{
+    background:white;
+    color:black;
+
+    width:100%;
+    max-width:500px;
+
+    border-radius:15px;
+
+    padding:25px;
+
+    animation:fadeIn 0.3s ease;
+}
+
+.modal-actions{
+    display:flex;
+    gap:10px;
+    margin-top:10px;
+}
+
+/* CANCEL BUTTON */
+.cancel-btn{
+    background:#6b7280;
+    color:white;
+
+    border:none;
+    padding:12px 18px;
+    border-radius:8px;
+
+    cursor:pointer;
+}
+
+.cancel-btn:hover{
+    background:#4b5563;
+}
+
+/* EMPTY */
+.empty{
+    text-align:center;
+    font-size:20px;
+    opacity:0.7;
+    margin-top:50px;
+}
+
+/* ANIMATION */
+@keyframes fadeIn{
+
+    from{
+        opacity:0;
+        transform:translateY(20px);
+    }
+
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- ================= NAVBAR ================= -->
+
 <div class="navbar">
 
-    <div class="left">✍️ Manage Quotes</div>
+    <div class="logo">
+        ✍️ Manage Quotes
+    </div>
 
-    <div class="hamburger" onclick="toggleMenu()">☰</div>
+    <div class="nav-buttons">
 
-    <div class="links" id="menu">
+        <button
+        class="nav-btn back-btn"
+        onclick="goBack()">
+            ← Back
+        </button>
 
-        <a class="nav-btn" href="./gallery.html">Admin Panel</a>
-        <a class="nav-btn" href="./create-quote.html">Manage Quotes</a>
-        <a class="nav-btn" href="./quote.html">Life Quotes</a>
-
-        <button class="logout-btn" onclick="logout()">Logout</button>
+        <button
+        class="nav-btn logout-btn"
+        onclick="logout()">
+            Logout
+        </button>
 
     </div>
+
+</div>
+
+<!-- ================= MAIN ================= -->
+
+<div class="container">
+
+    <!-- CREATE FORM -->
+    <div class="form-box">
+
+        <h2>Create Quote</h2>
+
+        <input
+        id="person"
+        placeholder="Person Name">
+
+        <input
+        id="image"
+        placeholder="Image URL">
+
+        <textarea
+        id="quote"
+        placeholder="Write quote..."></textarea>
+
+        <button
+        class="save-btn"
+        onclick="createQuote()">
+            Publish Quote
+        </button>
+
+    </div>
+
+    <!-- QUOTES -->
+    <div
+    id="quotes"
+    class="quote-grid"></div>
+
+</div>
+
+<!-- ================= EDIT MODAL ================= -->
+
+<div class="modal"
+id="editModal">
+
+    <div class="modal-box">
+
+        <h2>Edit Quote</h2>
+
+        <input
+        id="editPerson"
+        placeholder="Person Name">
+
+        <input
+        id="editImage"
+        placeholder="Image URL">
+
+        <textarea
+        id="editText"
+        placeholder="Quote"></textarea>
+
+        <div class="modal-actions">
+
+            <button
+            class="save-btn"
+            onclick="saveEdit()">
+                Save Changes
+            </button>
+
+            <button
+            class="cancel-btn"
+            onclick="closeModal()">
+                Cancel
+            </button>
+
+        </div>
+
+    </div>
+
 </div>
 
 <script>
-function toggleMenu(){
-    document.getElementById("menu").classList.toggle("show");
+
+const API =
+"http://localhost:5000";
+
+const token =
+localStorage.getItem("token");
+
+/* PROTECT PAGE */
+if(!token){
+
+    window.location.href =
+    "./admin.html";
 }
 
-function logout(){
-    localStorage.removeItem("token");
-    window.location.href="./admin.html";
+/* BACK */
+function goBack(){
+
+    window.location.href =
+    "./gallery.html";
 }
+
+/* LOGOUT */
+function logout(){
+
+    localStorage.removeItem("token");
+
+    window.location.href =
+    "./admin.html";
+}
+
+/* LOAD QUOTES */
+async function loadQuotes(){
+
+    try{
+
+        const res = await fetch(
+            API + "/quote"
+        );
+
+        const data = await res.json();
+
+        const quotes =
+        document.getElementById("quotes");
+
+        quotes.innerHTML = "";
+
+        if(!Array.isArray(data)
+        || data.length === 0){
+
+            quotes.innerHTML = `
+                <div class="empty">
+                    No quotes available
+                </div>
+            `;
+
+            return;
+        }
+
+        data.forEach(item => {
+
+            const div =
+            document.createElement("div");
+
+            div.className = "card";
+
+            const safePerson =
+            item.person.replace(/'/g, "\\'");
+
+            const safeText =
+            item.text.replace(/'/g, "\\'");
+
+            const safeImage =
+            item.image.replace(/'/g, "\\'");
+
+            div.innerHTML = `
+
+                <img src="${item.image}">
+
+                <div class="card-content">
+
+                    <h3>${item.person}</h3>
+
+                    <p>"${item.text}"</p>
+
+                    <div class="actions">
+
+                        <button
+                        class="edit-btn"
+                        onclick="openEdit(
+                            '${item._id}',
+                            '${safePerson}',
+                            '${safeText}',
+                            '${safeImage}'
+                        )">
+                            Edit
+                        </button>
+
+                        <button
+                        class="delete-btn"
+                        onclick="deleteQuote('${item._id}')">
+                            Delete
+                        </button>
+
+                    </div>
+
+                </div>
+            `;
+
+            quotes.appendChild(div);
+        });
+
+    }catch(err){
+
+        console.log(err);
+
+        document.getElementById("quotes")
+        .innerHTML = `
+            <div class="empty">
+                Failed to load quotes
+            </div>
+        `;
+    }
+}
+
+/* CREATE */
+async function createQuote(){
+
+    const person =
+    document.getElementById("person").value.trim();
+
+    const image =
+    document.getElementById("image").value.trim();
+
+    const quote =
+    document.getElementById("quote").value.trim();
+
+    if(!person || !image || !quote){
+
+        alert("Please fill all fields");
+
+        return;
+    }
+
+    try{
+
+        const res = await fetch(
+            API + "/quote",
+            {
+                method:"POST",
+
+                headers:{
+                    "Content-Type":"application/json",
+                    "Authorization":"Bearer " + token
+                },
+
+                body:JSON.stringify({
+                    person,
+                    text:quote,
+                    image
+                })
+            }
+        );
+
+        const data = await res.json();
+
+        if(data.success){
+
+            document.getElementById("person").value = "";
+            document.getElementById("image").value = "";
+            document.getElementById("quote").value = "";
+
+            loadQuotes();
+
+        }else{
+
+            alert("Failed to create quote");
+        }
+
+    }catch(err){
+
+        console.log(err);
+
+        alert("Server error");
+    }
+}
+
+/* DELETE */
+async function deleteQuote(id){
+
+    const ok =
+    confirm("Delete this quote?");
+
+    if(!ok) return;
+
+    try{
+
+        await fetch(
+            API + "/quote/" + id,
+            {
+                method:"DELETE",
+
+                headers:{
+                    "Authorization":
+                    "Bearer " + token
+                }
+            }
+        );
+
+        loadQuotes();
+
+    }catch(err){
+
+        console.log(err);
+
+        alert("Delete failed");
+    }
+}
+
+/* EDIT */
+let currentEditId = null;
+
+function openEdit(id, person, text, image){
+
+    currentEditId = id;
+
+    document.getElementById("editPerson").value =
+    person;
+
+    document.getElementById("editText").value =
+    text;
+
+    document.getElementById("editImage").value =
+    image;
+
+    document.getElementById("editModal").style.display =
+    "flex";
+}
+
+/* CLOSE MODAL */
+function closeModal(){
+
+    document.getElementById("editModal").style.display =
+    "none";
+}
+
+/* SAVE EDIT */
+async function saveEdit(){
+
+    const person =
+    document.getElementById("editPerson").value.trim();
+
+    const text =
+    document.getElementById("editText").value.trim();
+
+    const image =
+    document.getElementById("editImage").value.trim();
+
+    if(!person || !text || !image){
+
+        alert("Fill all fields");
+
+        return;
+    }
+
+    try{
+
+        await fetch(
+            API + "/quote/" + currentEditId,
+            {
+                method:"PUT",
+
+                headers:{
+                    "Content-Type":"application/json",
+                    "Authorization":
+                    "Bearer " + token
+                },
+
+                body:JSON.stringify({
+                    person,
+                    text,
+                    image
+                })
+            }
+        );
+
+        closeModal();
+
+        loadQuotes();
+
+    }catch(err){
+
+        console.log(err);
+
+        alert("Update failed");
+    }
+}
+
+/* START */
+loadQuotes();
+
 </script>
+
+</body>
+</html>
