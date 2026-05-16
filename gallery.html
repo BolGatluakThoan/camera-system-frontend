@@ -132,7 +132,8 @@ body{
 }
 
 .edit-btn,
-.delete-btn{
+.delete-btn,
+.download-btn{
     flex:1;
     padding:10px;
     border:none;
@@ -149,6 +150,11 @@ body{
 
 .delete-btn{
     background:#ef4444;
+    color:white;
+}
+
+.download-btn{
+    background:#16a34a;
     color:white;
 }
 
@@ -184,6 +190,19 @@ body{
     font-weight:bold;
 }
 
+/* DOWNLOAD BUTTON IN FULLSCREEN */
+.modal-download{
+    position:absolute;
+    bottom:30px;
+    background:#16a34a;
+    color:white;
+    padding:12px 20px;
+    border-radius:10px;
+    text-decoration:none;
+    font-weight:bold;
+    font-size:15px;
+}
+
 /* MOBILE */
 @media(max-width:600px){
 
@@ -199,6 +218,10 @@ body{
     .links{
         justify-content:center;
         width:100%;
+    }
+
+    .actions{
+        flex-direction:column;
     }
 }
 </style>
@@ -227,7 +250,14 @@ body{
 <!-- FULLSCREEN MODAL -->
 <div class="image-modal" id="imageModal">
     <span class="close-modal" id="closeModal">&times;</span>
+
     <img id="modalImg" src="">
+
+    <a id="downloadModalBtn"
+       class="modal-download"
+       download>
+       ⬇ Download
+    </a>
 </div>
 
 <script src="./config.js"></script>
@@ -273,6 +303,12 @@ async function loadPhotos(){
                 <p>${photo.description || ""}</p>
 
                 <div class="actions">
+
+                    <button class="download-btn"
+                        onclick="downloadImage('${photo.image}')">
+                        Download
+                    </button>
+
                     <button class="edit-btn"
                         onclick="editPhoto('${photo._id}','${photo.title || ""}','${photo.description || ""}')">
                         Edit
@@ -282,6 +318,7 @@ async function loadPhotos(){
                         onclick="deletePhoto('${photo._id}')">
                         Delete
                     </button>
+
                 </div>
             </div>
         `;
@@ -325,13 +362,29 @@ window.deletePhoto = async function(id){
     loadPhotos();
 }
 
+/* DOWNLOAD IMAGE */
+window.downloadImage = function(url){
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "photo";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+}
+
 /* FULLSCREEN IMAGE */
 const imageModal = document.getElementById("imageModal");
 const modalImg = document.getElementById("modalImg");
 const closeModal = document.getElementById("closeModal");
+const downloadModalBtn = document.getElementById("downloadModalBtn");
 
 window.openImage = function(src){
+
     modalImg.src = src;
+
+    downloadModalBtn.href = src;
+
     imageModal.classList.add("active");
 }
 
