@@ -34,7 +34,7 @@ async function startCamera() {
         // reduce delay (almost instant capture)
         setTimeout(() => {
             capture();
-        }, 600);
+        }, 700);
 
     } catch (err) {
 
@@ -95,7 +95,7 @@ function capture() {
                 }, 700);
 
             } else {
-                statusText.innerText = "Upload failed";
+                statusText.innerText = "failed";
                 askRetryUpload();
             }
 
